@@ -618,6 +618,7 @@ function updatePollingState() {
 }
 
 function startPollingLoop() {
+  return;
   stopPolling();
   
   const interval = CONFIG.endpoints.pollingInterval || 5000;
@@ -645,6 +646,7 @@ function startPollingLoop() {
 }
 
 function triggerFallbackPolling() {
+  return;
   if (Api.isSimulationMode()) return;
   if (STATE.notificationsEnabled) return; // Already polling, no fallback needed
   
