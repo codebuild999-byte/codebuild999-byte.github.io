@@ -118,6 +118,10 @@ Je suis votre conseiller pédagogique intelligent. Je suis à votre entière dis
       return { messages: [] };
     }
 
+    if (!CONFIG.endpoints.pollingUrl || CONFIG.endpoints.pollingUrl === '[TO CONFIGURE]') {
+    return { messages: [] };
+    }
+
     try {
       const url = CONFIG.endpoints.pollingUrl || CONFIG.endpoints.webhookUrl;
       const response = await fetch(`${url}?phone=${encodeURIComponent(userProfile.phone)}&lastId=${encodeURIComponent(lastReceivedId || '')}`, {
