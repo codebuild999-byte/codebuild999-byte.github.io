@@ -64,7 +64,7 @@ export const CONFIG = {
   endpoints: {
     webhookUrl: "https://n8n-production-47ea.up.railway.app/webhook/AppSchool", // Set Webhook URL to integrate with n8n
     initUrl: "https://n8n-production-47ea.up.railway.app/webhook/AppSchool",    // Set Init URL to integrate with n8n
-    pollingUrl: "https://n8n-production-47ea.up.railway.app/webhook/AppSchool", // Set Polling URL to integrate with n8n
+    pollingUrl: "", // Set Polling URL to integrate with n8n
     pollingInterval: 5000 // POLL INTERVAL
   },
   
