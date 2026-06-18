@@ -600,6 +600,7 @@ function setupAttachmentUpload() {
 
 // 10. Polling Loop
 function updatePollingState() {
+  return;
   if (Api.isSimulationMode()) {
     stopPolling();
     return;
@@ -618,7 +619,7 @@ function updatePollingState() {
 }
 
 function startPollingLoop() {
-  //return;
+  return;
   stopPolling();
   
   const interval = CONFIG.endpoints.pollingInterval || 5000;
@@ -646,7 +647,7 @@ function startPollingLoop() {
 }
 
 function triggerFallbackPolling() {
-  //return;
+  return;
   if (Api.isSimulationMode()) return;
   if (STATE.notificationsEnabled) return; // Already polling, no fallback needed
   
@@ -658,6 +659,7 @@ function triggerFallbackPolling() {
 }
 
 function clearFallbackPolling() {
+  return;
   if (STATE.isFallbackPolling) {
     console.log("[Polling] Webhook responded immediately. Resetting fallback polling...");
     STATE.isFallbackPolling = false;
@@ -666,6 +668,7 @@ function clearFallbackPolling() {
 }
 
 function stopPolling() {
+  return;
   if (STATE.pollingTimer) {
     console.log("[Polling] Loop stopped.");
     clearInterval(STATE.pollingTimer);
