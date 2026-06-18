@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    
+    <!-- PWA Basic Meta Flags -->
+    <title>Langue+ Assistant</title>
+    <meta name="description" content="Découvrez les formations, posez vos questions et préparez votre parcours linguistique." />
+    <meta name="theme-color" content="#0F4C81" />
+    <link rel="manifest" href="/manifest.json" />
+    
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Langue+" />
+    
+    <!-- Premium CSS Layout styling -->
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <!-- Main Application Viewport -->
+    <div id="app-viewport">
+      
+      <!-- ========================= -->
+      <!-- BEGIN BUSINESS ONBOARDING -->
+      <!-- ========================= -->
+
+      <!-- 1. Onboarding Screen Container -->
+      <div id="onboarding-screen" class="app-screen">
+        <div class="onboarding-container">
+          <header class="onboarding-header">
+            <div class="logo-badge">
+              <!-- Deep Blue Professional Logo Icon -->
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0F4C81" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2A10 10 0 0 1 22 12a10 10 0 0 1-10 10A10 10 0 0 1 2 12A10 10 0 0 1 12 2z"/>
+                <path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12z"/>
+              </svg>
+              <span class="logo-text">Langue+</span>
+            </div>
+            <span class="badge-status">Assistant Officiel</span>
+          </header>
+          
+          <!-- Carousel Viewport -->
+          <div class="carousel-viewport">
+            <div class="carousel-track" id="carousel-slides">
+              <!-- Rendered dynamically by app.js based on CONFIG.onboarding.steps -->
+            </div>
+            
+            <div class="carousel-nav">
+              <div class="carousel-indicators" id="carousel-indicators">
+                <!-- Indicators rendered dynamically -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Trust Signals Grid -->
+          <div class="trust-container">
+            <div class="trust-grid" id="trust-grid">
+              <!-- Badges rendered dynamically -->
+            </div>
+          </div>
+          
+          <!-- Onboarding Footer Action -->
+          <div class="onboarding-footer">
+            <button class="cta-prime-btn" id="onboarding-cta-btn">
+              <span>Commencer</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" x2="19" y1="12" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Registration Screen Container -->
+      <div id="registration-screen" class="app-screen hidden">
+        <div class="registration-container">
+          <header class="registration-header">
+            <button class="back-link-btn" id="registration-back-btn" aria-label="Retour au carrousel d'accueil">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" x2="5" y1="12" y2="12"/><polyline points="12 19 5 12 12-5"/>
+              </svg>
+            </button>
+            <div class="badge-tag">Profil Étudiant</div>
+          </header>
+          
+          <main class="registration-content">
+            <div class="registration-hero-block">
+              <h1>Créer votre accès</h1>
+              <p>Rejoignez Langue+ en indiquant votre nom et votre numéro pour débloquer votre assistant de langue personnalisé.</p>
+            </div>
+            
+            <form class="registration-form-card" id="registration-form" novalidate>
+              <div class="fields-grid" id="registration-fields-list">
+                <!-- Rendered dynamically based on CONFIG.registration fields -->
+              </div>
+              
+              <div class="form-privacy-note">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0F4C81" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <span>Vos données sont protégées. Votre assistant se rappellera de vos préférences de cours et de votre progression.</span>
+              </div>
+              
+              <button type="submit" class="cta-prime-btn form-submit-btn" id="registration-submit-btn">
+                <span>Accéder à l'Assistant</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+            </form>
+          </main>
+        </div>
+      </div>
+
+      <!-- ======================= -->
+      <!-- END BUSINESS ONBOARDING -->
+      <!-- ======================= -->
+      
+      <!-- 3. Chat Screen Container -->
+      <div id="chat-screen" class="app-screen hidden">
+        <!-- Chat Header -->
+        <header class="chat-header" id="chat-header">
+          <div class="header-left">
+            <div class="header-avatar">
+              <!-- Inline School SVG Avatar -->
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F4C81" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+              <div class="avatar-badge-online"></div>
+            </div>
+            
+            <div class="school-details">
+              <div class="school-title">Langue+ Assistant</div>
+              <div class="school-desc">Online</div>
+            </div>
+          </div>
+          
+          <!-- Actions -->
+          <div class="header-right-actions">
+            <!-- Profile Trigger -->
+            <button class="header-circle-btn" id="header-profile-btn" aria-label="Visualiser le profil">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </button>
+            <!-- Settings Trigger -->
+            <button class="header-circle-btn" id="header-settings-btn" aria-label="Ouvrir les réglages">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            </button>
+          </div>
+        </header>
+        
+        <!-- Messages Area -->
+        <main class="messages-viewport" id="messages-viewport">
+          <!-- Dynamic bubbles go here -->
+        </main>
+        
+        <!-- Input Composer Area -->
+        <form class="chat-composer" id="chat-composer-form">
+          <!-- Attachment action -->
+          <button type="button" class="composer-action-btn" id="attachment-action-btn" aria-label="Joindre un document">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+          </button>
+          <input type="file" id="hidden-attachment-input" accept="image/*,application/pdf,application/msword,text/*" />
+          
+          <!-- Flexible Auto growing input field -->
+          <textarea class="composer-input-field" id="composer-input" rows="1" placeholder="Écrivez un message..." aria-label="Zone de saisie du message"></textarea>
+          
+          <!-- CTA Action -->
+          <button type="submit" class="composer-send-btn" id="composer-send-btn" aria-label="Envoyer le message">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" x2="11" y1="2" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </form>
+      </div>
+      
+      <!-- Slide Over 1: Profile Panel -->
+      <div id="profile-panel" class="sliding-panel hidden">
+        <header class="panel-header">
+          <button class="panel-back-btn" id="profile-back-btn" aria-label="Fermer le profil">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" x2="5" y1="12" y2="12"/><polyline points="12 19 5 12 12-5"/></svg>
+          </button>
+          <div class="panel-title">Profil Étudiant</div>
+        </header>
+        
+        <div class="panel-body-content">
+          <div class="profile-avatar-block">
+            <div class="large-avatar-frame">👤</div>
+          </div>
+          
+          <div class="profile-fields-list" id="profile-fields-container">
+            <!-- Computed dynamically -->
+          </div>
+          
+          <div class="profile-edit-actions">
+            <button class="danger-action-btn" id="profile-reset-btn">
+              Réinitialiser la Session
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Slide Over 2: Settings Panel -->
+      <div id="settings-panel" class="sliding-panel hidden">
+        <header class="panel-header">
+          <button class="panel-back-btn" id="settings-back-btn" aria-label="Fermer les réglages">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" x2="5" y1="12" y2="12"/><polyline points="12 19 5 12 12-5"/></svg>
+          </button>
+          <div class="panel-title">Réglages Système</div>
+        </header>
+        
+        <div class="panel-body-content">
+          <!-- Dark Theme switcher -->
+          <div class="toggle-control-item">
+            <div class="toggle-label-column">
+              <span class="toggle-main-title">Thème Sombre</span>
+              <span class="toggle-sub-desc">Soulager la fatigue visuelle</span>
+            </div>
+            <label class="switch-box">
+              <input type="checkbox" id="switch-theme-input">
+              <span class="slider-knob"></span>
+            </label>
+          </div>
+          
+          <!-- Notifications switcher -->
+          <div class="toggle-control-item">
+            <div class="toggle-label-column">
+              <span class="toggle-main-title">Notifications PWA</span>
+              <span class="toggle-sub-desc">Alertes de rappel pour vos formations</span>
+            </div>
+            <label class="switch-box">
+              <input type="checkbox" id="switch-notify-input">
+              <span class="slider-knob"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+    
+    <!-- Coordinate scripts -->
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
