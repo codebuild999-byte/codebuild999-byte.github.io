@@ -1,4 +1,8 @@
 import { CONFIG } from './config.js';
+import { io } from 'https://cdn.socket.io/4.7.5/socket.io.esm.min.js';
+
+let socket = null;
+let messageHandler = null; // callback set by the app
 
 // Simple UUID generator for mock purposes
 function generateUUID() {
@@ -6,11 +10,35 @@ function generateUUID() {
 }
 
 export const Api = {
-  // Checks if we should act in local simulation mode
-  isSimulationMode() {
-    const urls = CONFIG.endpoints;
-    return !urls.webhookUrl || urls.webhookUrl === '[TO CONFIGURE]';
+  connect(onMessageReceived) {
+    if (socket?.connected) return;
+
+    socket = io(CONFIG.endpoints.socketUrl); // new config key
+
+    socket.on('connect', () => {
+      console.log('[Socket] Connected:', socket.id);
+    });
+
+    socket.on('bot_message', (data) => {
+      if (messageHandler) messageHandler(data);
+    });
+
+    socket.on('bot_error', (err) => {
+      console.error('[Socket] Error from server:', err);
+    });
+
+    socket.on('disconnect', () => {
+      console.log('[Socket] Disconnected');
+    });
+
+    messageHandler = onMessageReceived;
   },
+
+  disconnect() {
+    socket?.disconnect();
+    socket = null;
+  },
+  
 
   // Post initialization event when user starts or registers
   async initChat(userProfile) {
@@ -59,25 +87,26 @@ Je suis votre conseiller pédagogique intelligent. Je suis à votre entière dis
 
     // Real API integration
     try {
-      const response = await fetch(CONFIG.endpoints.initUrl || CONFIG.endpoints.webhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      return new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          reject(new Error('Socket response timeout'));
+        }, 30000);
+
+        // One-time listener for the reply to THIS specific send
+        socket.once('bot_message', (data) => {
+          clearTimeout(timeout);
+          resolve(data);
+        });
+  
+        socket.emit('user_message', {
           event: "chat_opened",
           name: userProfile.name,
           phone: userProfile.phone,
           email: userProfile.email || "",
           country: userProfile.country || "",
           timestamp: new Date().toISOString()
-        })
-      });
-      if (!response.ok) throw new Error(`HTTP status ${response.status}`);
-      const data = await response.json();
-      return data; // Expected structure: { messages: [ ... ] }
-    } catch (err) {
-      console.error("Error calling INIT_URL:", err);
-      return { messages: [], error: err.message };
-    }
+        });
+    });
   },
 
   // Send interactive user events/text to webhook
@@ -88,54 +117,60 @@ Je suis votre conseiller pédagogique intelligent. Je suis à votre entière dis
     }
 
     try {
-      const response = await fetch(CONFIG.endpoints.webhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      return new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          reject(new Error('Socket response timeout'));
+        }, 30000);
+  
+        // One-time listener for the reply to THIS specific send
+        socket.once('bot_message', (data) => {
+          clearTimeout(timeout);
+          resolve(data);
+        });
+  
+        socket.emit('user_message', {
           ...eventPayload,
           user: {
             name: userProfile.name,
             phone: userProfile.phone,
-            email: userProfile.email || "",
-            country: userProfile.country || ""
+            email: userProfile.email || '',
+            country: userProfile.country || ''
           },
           timestamp: new Date().toISOString()
-        })
-      });
-      if (!response.ok) throw new Error(`HTTP status ${response.status}`);
-      const data = await response.json();
-      return data; // Expected structures: { messages: [ ... ] } or simple ack
-    } catch (err) {
-      console.error("Error sending event to Webhook:", err);
-      return { messages: [], error: err.message };
+        });
+    });
+
+  isSimulationMode() {
+    return !CONFIG.endpoints.socketUrl || 
+           CONFIG.endpoints.socketUrl === '[TO CONFIGURE]';
     }
   },
 
   // Poll for new messaging events
-  async pollMessages(userProfile, lastReceivedId) {
-    if (this.isSimulationMode()) {
-      // In simulation mode, polling is a pass-through
-      return { messages: [] };
-    }
+  // async pollMessages(userProfile, lastReceivedId) {
+  //   if (this.isSimulationMode()) {
+  //     // In simulation mode, polling is a pass-through
+  //     return { messages: [] };
+  //   }
 
-    if (!CONFIG.endpoints.pollingUrl || CONFIG.endpoints.pollingUrl === '[TO CONFIGURE]') {
-    return { messages: [] };
-    }
+  //   if (!CONFIG.endpoints.pollingUrl || CONFIG.endpoints.pollingUrl === '[TO CONFIGURE]') {
+  //   return { messages: [] };
+  //   }
 
-    try {
-      const url = CONFIG.endpoints.pollingUrl || CONFIG.endpoints.webhookUrl;
-      const response = await fetch(`${url}?phone=${encodeURIComponent(userProfile.phone)}&lastId=${encodeURIComponent(lastReceivedId || '')}`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
-      });
-      if (!response.ok) throw new Error(`HTTP status ${response.status}`);
-      const data = await response.json();
-      return data; // Expected: { messages: [ ... ] }
-    } catch (err) {
-      console.warn("Polling failed:", err);
-      return { messages: [] };
-    }
-  },
+  //   try {
+  //     const url = CONFIG.endpoints.pollingUrl || CONFIG.endpoints.webhookUrl;
+  //     const response = await fetch(`${url}?phone=${encodeURIComponent(userProfile.phone)}&lastId=${encodeURIComponent(lastReceivedId || '')}`, {
+  //       method: 'GET',
+  //       headers: { 'Content-Type': 'application/json' }
+  //     });
+  //     if (!response.ok) throw new Error(`HTTP status ${response.status}`);
+  //     const data = await response.json();
+  //     return data; // Expected: { messages: [ ... ] }
+  //   } catch (err) {
+  //     console.warn("Polling failed:", err);
+  //     return { messages: [] };
+  //   }
+  // },
 
   // Implements the mock educational dialogue state for immediate preview
   async handleSimulationLogic(event, userProfile) {
