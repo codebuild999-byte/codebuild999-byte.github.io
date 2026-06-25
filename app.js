@@ -114,7 +114,6 @@ function switchToScreen(screenId) {
     DOM.registrationScreen.classList.remove('hidden');
   } else if (screenId === 'chat') {
     DOM.chatScreen.classList.remove('hidden');
-    updatePollingState();
   }
 }
 
@@ -270,11 +269,8 @@ function setupRegistrationForm() {
     hideTypingLoader();
     
     if (result && result.messages && result.messages.length > 0) {
-      clearFallbackPolling();
       await Storage.saveMessages(result.messages);
       renderAllMessages(result.messages);
-    } else {
-      triggerFallbackPolling();
     }
   });
 }
@@ -289,18 +285,14 @@ async function loadPersistedMessagesAndTriggerInit() {
   const history = await Storage.getMessages();
   if (history.length > 0) {
     renderAllMessages(history);
-    updatePollingState();
   } else {
     // Fallback: Initial welcome if nothing exists
     showTypingLoader();
     const result = await Api.initChat(STATE.user);
     hideTypingLoader();
     if (result && result.messages && result.messages.length > 0) {
-      clearFallbackPolling();
       await Storage.saveMessages(result.messages);
       renderAllMessages(result.messages);
-    } else {
-      triggerFallbackPolling();
     }
   }
 }
@@ -392,12 +384,9 @@ DOM.composerForm.addEventListener('submit', async (e) => {
   hideTypingLoader();
   
   if (result && result.messages && result.messages.length > 0) {
-    clearFallbackPolling();
     await Storage.saveMessages(result.messages);
     result.messages.forEach(msg => appendMessageDom(msg));
-  } else {
-    triggerFallbackPolling();
-  }
+    }
 });
 
 // Listener for Enter to send message
@@ -441,11 +430,8 @@ async function handleInteractiveEvent(eventPayload) {
   hideTypingLoader();
 
   if (response && response.messages && response.messages.length > 0) {
-    clearFallbackPolling();
     await Storage.saveMessages(response.messages);
     response.messages.forEach(msg => appendMessageDom(msg));
-  } else {
-    triggerFallbackPolling();
   }
 }
 
@@ -473,7 +459,6 @@ function setupSlidePanels() {
     if (!confirmation) return;
     
     STATE.isFallbackPolling = false;
-    stopPolling();
     await Storage.clearUser();
     
     STATE.user = null;
@@ -543,7 +528,6 @@ function setupPreferences() {
       STATE.notificationsEnabled = false;
       await Storage.saveState('notifications', false);
     }
-    updatePollingState();
   });
 }
 
@@ -598,83 +582,6 @@ function setupAttachmentUpload() {
   });
 }
 
-// 10. Polling Loop
-function updatePollingState() {
-  return;
-  if (Api.isSimulationMode()) {
-    stopPolling();
-    return;
-  }
-
-  // Poll if user enabled notifications OR if we are in fallback polling
-  const shouldPoll = STATE.notificationsEnabled || STATE.isFallbackPolling;
-
-  if (shouldPoll) {
-    if (!STATE.pollingTimer) {
-      startPollingLoop();
-    }
-  } else {
-    stopPolling();
-  }
-}
-
-function startPollingLoop() {
-  return;
-  stopPolling();
-  
-  const interval = CONFIG.endpoints.pollingInterval || 5000;
-  console.log(`[Polling] Loop started. Push Notifications Enabled: ${STATE.notificationsEnabled}, Fallback Active: ${STATE.isFallbackPolling}`);
-  
-  STATE.pollingTimer = setInterval(async () => {
-    if (!STATE.user || STATE.activeScreen !== 'chat') return;
-    
-    const existing = await Storage.getMessages();
-    const lastId = existing.length > 0 ? existing[existing.length - 1].id : '';
-    
-    const result = await Api.pollMessages(STATE.user, lastId);
-    if (result && result.messages && result.messages.length > 0) {
-      await Storage.saveMessages(result.messages);
-      result.messages.forEach(msg => appendMessageDom(msg));
-      
-      // Stop the fallback loop if messages are received
-      if (STATE.isFallbackPolling) {
-        console.log("[Polling] Fallback received messages. Turning off fallback polling.");
-        STATE.isFallbackPolling = false;
-        updatePollingState();
-      }
-    }
-  }, interval);
-}
-
-function triggerFallbackPolling() {
-  return;
-  if (Api.isSimulationMode()) return;
-  if (STATE.notificationsEnabled) return; // Already polling, no fallback needed
-  
-  if (!STATE.isFallbackPolling) {
-    console.log("[Polling] Webhook did not send immediate messages. Activating fallback polling...");
-    STATE.isFallbackPolling = true;
-    updatePollingState();
-  }
-}
-
-function clearFallbackPolling() {
-  return;
-  if (STATE.isFallbackPolling) {
-    console.log("[Polling] Webhook responded immediately. Resetting fallback polling...");
-    STATE.isFallbackPolling = false;
-    updatePollingState();
-  }
-}
-
-function stopPolling() {
-  return;
-  if (STATE.pollingTimer) {
-    console.log("[Polling] Loop stopped.");
-    clearInterval(STATE.pollingTimer);
-    STATE.pollingTimer = null;
-  }
-}
 
 // Start application bootstrap
 document.addEventListener('DOMContentLoaded', initApp);
